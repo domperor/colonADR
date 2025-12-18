@@ -1,7 +1,7 @@
-Package: apcadrJed
+Package: colonADR
 Type: Package
 Title: APC and ADR calculater
-Version: 0.0.3
+Version: 0.0.1
 Author: Mitsuaki Oura
 Maintainer: Mitsuaki Oura <hisakatafuji@yahoo.co.jp>
 Description: This package calculate APC (adenoma per colonoscopy), ADR (adenoma detection rate), polyp per colonoscopy (PPC), polyp detection rate (PDR), advanced colorectal neoplasm detection rate (ACN DR), and advanced colorectal neoplasm per colonoscopy (ACN per colonoscopy) from JED-style database.
