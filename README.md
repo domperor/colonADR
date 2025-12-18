@@ -29,3 +29,6 @@ x<-apcadr(data)
 # Then you can access each value with x$APC, x$ADR, x$PPC, x$PDR, x$ACNDR and x$ACNPC.
 ```
 
+## History
+
+2025.12.18 ver 0.0.1
