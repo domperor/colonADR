@@ -54,7 +54,6 @@ ui <- page_sidebar(
   # Output: Data file ----
   textOutput("reshead"),
   tableOutput("APCADR"),
-#  textOutput("test"),
   verbatimTextOutput("abbr"),
   tableOutput("dataframe")
 )
@@ -75,9 +74,6 @@ server <- function(input, output, session) {
 
     selectInput("rowname", "Step 2: Choose Row Name", colnames(df))
   })
-
-  #Output - testcode
-  #observeEvent(input$submit,{output$test<-renderText({df()[,input$rowname]})})
 
   #Output - result header
   output$reshead <- renderText({"Result: "})
@@ -132,13 +128,6 @@ server <- function(input, output, session) {
     pdr <- num_polyppositive / length(x)
     apc <- num_adenoma / (length(x) - num_polyposis)
     adr <- num_adenomapositive / (length(x) - num_polyposis)
-
-#confidence interval 表示，準備中
-    #割合はいいが，ppc，apcのCI表示はカウントの実装をまるきり直す必要があり手間あり
-#    pdr_lower_ci <- pdr - sqrt(pdr*(1-pdr)/length(x))*qt(0.975,length(x)-1)
-#    pdr_upper_ci <- pdr + sqrt(pdr*(1-pdr)/length(x))*qt(0.975,length(x)-1)
-#    adr_lower_ci <- adr - sqrt(adr*(1-adr)/(length(x) - num_polyposis))*qt(0.975,(length(x) - num_polyposis)-1)
-#    adr_upper_ci <- adr + sqrt(adr*(1-adr)/(length(x) - num_polyposis))*qt(0.975,(length(x) - num_polyposis)-1)
 
     advcancerpositive <- grepl("進行", x)
     nonrelapsed_cancer_yes <- grepl("再発[^|]{0,15}(無|無し|なし|無い|ない|認めず|みとめず|ません|無さそう|なさそう|指摘できず|指摘し得ず|指摘しえず|見当たらず|みあたらず)", advcancerpositive)
