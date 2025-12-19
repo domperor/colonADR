@@ -33,6 +33,8 @@
 
 <img width="600" alt="Run Appボタンの位置画像" src="./img/runapp.png">
 
+4. 
+
 
 一内視鏡中の所見は「|」で区切ってください。
 

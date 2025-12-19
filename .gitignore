@@ -4,3 +4,4 @@
 .Ruserdata
 .DS_Store
 /shiny/rsconnect
+/shiny/app.R
