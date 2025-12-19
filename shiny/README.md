@@ -19,13 +19,17 @@
 
 をJEDスタイルの内視鏡所見データベースから計算することができます。現在日本語（エンコーディング：UTF-8）のみの対応です。
 
-なお，デモ版は[Web（shinyapps.io）から，手軽にトライしていただけます](https://domperor.shinyapps.io/apcadrjed_shiny/)。ただし，傍受のリスクを避けるため，機微のある個人情報を扱う場合はローカル版を使用するようにしてください。
+なお，デモ版は[Web（shinyapps.io）から，手軽にトライしていただけます](https://domperor.shinyapps.io/apcadrjed_shiny/){:target="_blank"}。ただし，傍受のリスクを避けるため，機微のある個人情報を扱う場合はローカル版を使用するようにしてください。
 
 ## ローカル版のインストール方法
 
-1. このアプリはRStudio Desktop上で動作します。[まずはこちらからRStudio Desktopをダウンロードしてください](https://posit.co/download/rstudio-desktop/)。
+1. このアプリはRStudio Desktop上で動作します。[まずはこちらからRStudio Desktopをダウンロードしてください](https://posit.co/download/rstudio-desktop/){:target="_blank"}。
 
-2. （記載中です）
+2. [このフォルダ中のcolonADR.appをダウンロードしてください](./colonADRapp.R){:target="_blank"}。ダウンロードボタンの位置：
+
+![ダウンロードボタンの位置画像](./img/githubraw_dl.png)
+
+
 
 一内視鏡中の所見は「|」で区切ってください。
 
