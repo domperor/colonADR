@@ -4,6 +4,15 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var links = document.querySelectorAll("a[href^='http']:not([href*='" + window.location.hostname + "'])");
+    links.forEach(function (link) {
+        link.setAttribute('target', '_new');
+    });
+});
+</script>
+
 **For English description, please scroll to the bottom of this page.**
 
 ## 説明
@@ -21,7 +30,7 @@
 
 なお，デモ版は<a href="https://domperor.shinyapps.io/apcadrjed_shiny/" target="_blank" rel="noopener noreferrer">Web（shinyapps.io）から，手軽にトライしていただけます</a>。ただし，傍受のリスクを避けるため，機微のある個人情報を扱う場合はローカル版を使用するようにしてください。
 
-![Web（shinyapps.io）から，手軽にトライしていただけます](https://domperor.shinyapps.io/apcadrjed_shiny/)
+[Web（shinyapps.io）から，手軽にトライしていただけます](https://domperor.shinyapps.io/apcadrjed_shiny/)
 
 ## ローカル版のインストール方法
 
