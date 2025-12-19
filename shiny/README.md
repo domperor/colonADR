@@ -4,15 +4,6 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    var links = document.querySelectorAll("a[href^='http']:not([href*='" + window.location.hostname + "'])");
-    links.forEach(function (link) {
-        link.setAttribute('target', '_new');
-    });
-});
-</script>
-
 **For English description, please scroll to the bottom of this page.**
 
 ## 説明
@@ -28,17 +19,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
 をJEDスタイルの内視鏡所見データベースから計算することができます。現在日本語（エンコーディング：UTF-8）のみの対応です。
 
-なお，デモ版は<a href="https://domperor.shinyapps.io/apcadrjed_shiny/" target="_blank" rel="noopener noreferrer">Web（shinyapps.io）から，手軽にトライしていただけます</a>。ただし，傍受のリスクを避けるため，機微のある個人情報を扱う場合はローカル版を使用するようにしてください。
-
-[Web（shinyapps.io）から，手軽にトライしていただけます](https://domperor.shinyapps.io/apcadrjed_shiny/)
+なお，デモ版は[Web（shinyapps.io）から，手軽にトライしていただけます](https://domperor.shinyapps.io/apcadrjed_shiny/)。ただし，傍受のリスクを避けるため，機微のある個人情報を扱う場合はローカル版を使用するようにしてください。
 
 ## ローカル版のインストール方法
 
-1. このアプリはRStudio Desktop上で動作します。<a href="https://posit.co/download/rstudio-desktop/" target="_blank" rel="noopener noreferrer">まずはこちらからRStudio Desktopをダウンロードしてください</a>。
+1. このアプリはRStudio Desktop上で動作します。[まずはこちらからRStudio Desktopをダウンロードしてください](https://posit.co/download/rstudio-desktop/)。
 
-2. <a href="./colonADRapp.R" target="_blank" rel="noopener noreferrer">このフォルダ中のcolonADR.appをダウンロードしてください</a>。ダウンロードボタンの位置：
+2. [このフォルダ中のcolonADR.appをダウンロードしてください](./colonADRapp.R)。ダウンロードボタンの位置：
 
 <img width="750" alt="ダウンロードボタンの位置画像" src="./img/githubraw_dl.png">
+
+3. ダウンロードしたcolonADR.appをRStudio Desktopで開き，▶Run App ボタンを押下してください：
+
+<img width="600" alt="Run Appボタンの位置画像" src="./img/runapp.png">
 
 
 一内視鏡中の所見は「|」で区切ってください。
