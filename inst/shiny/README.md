@@ -6,6 +6,8 @@
 
 **For English description, please scroll to the bottom of this page.**
 
+[For R package, see the parent directory.（Rパッケージバージョンはこちら）](../../)
+
 ## 説明
 
 このアプリでは，内視鏡の質の指標である
