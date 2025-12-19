@@ -19,7 +19,7 @@
 
 をJEDスタイルの内視鏡所見データベースから計算することができます。現在日本語（エンコーディング：UTF-8）のみの対応です。
 
-なお，デモ版は[Web（shinyapps.io）から，手軽にトライしていただけます](https://domperor.shinyapps.io/apcadrjed_shiny/)。ただし，傍受のリスクを避けるため，機微のある個人情報を扱う場合はローカル版を使用するようにしてください。
+なお，デモ版は[Web（shinyapps.io）から，手軽にトライしていただけます](https://domperor.shinyapps.io/colonADR/)。ただし，傍受のリスクを避けるため，機微のある個人情報を扱う場合はローカル版を使用するようにしてください。
 
 ## ローカル版のインストール方法
 
@@ -35,7 +35,7 @@
 
 ## 使い方
 
-1. Browse Fileボタンから，解析したいファイルを選択してください。手元にファイルがない場合は，[こちらのダミーデータベースでお試しいただくことも可能です](../tests/testthat/sample_CF_data.csv)。
+1. Browse Fileボタンから，解析したいファイルを選択してください。手元にファイルがない場合は，[こちらのダミーデータベースでお試しいただくことも可能です](../../tests/testthat/sample_CF_data.csv)。
 
 <img width="600" alt="Browse Fileボタン" src="./img/browsefile.png">
 
@@ -51,7 +51,7 @@
 
 ## Description
 
-This app calculate APC (adenoma per colonoscopy), ADR (adenoma detection rate), polyp per colonoscopy (PPC), polyp detection rate (PDR), advanced colorectal neoplasm detection rate (ACN DR), and advanced colorectal neoplasm per colonoscopy (ACN per colonoscopy) from JED-style database. You can easily try online the interface on [shinyapps.io](https://domperor.shinyapps.io/apcadrjed_shiny/); however, we recommend using local version when handling sensitive personal information, to avoid the risk of interception.
+This app calculate APC (adenoma per colonoscopy), ADR (adenoma detection rate), polyp per colonoscopy (PPC), polyp detection rate (PDR), advanced colorectal neoplasm detection rate (ACN DR), and advanced colorectal neoplasm per colonoscopy (ACN per colonoscopy) from JED-style database. You can easily try online the interface on [shinyapps.io](https://domperor.shinyapps.io/colonADR/); however, we recommend using local version when handling sensitive personal information, to avoid the risk of interception.
 
 ## How to install colonADR.app, local version
 

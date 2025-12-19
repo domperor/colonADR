@@ -9,7 +9,7 @@ This package calculate APC (adenoma per colonoscopy), ADR (adenoma detection rat
 
 ## Installation
 
-You can install the development version of apcadrJed like so:
+You can install the development version of colonADR like so:
 
 ``` r
 remotes::install_github("domperor/colonADR")
@@ -21,7 +21,7 @@ library(colonADR)
 This is a basic example:
 
 ``` r
-library(apcadrJed)
+library(colonADR)
 data<-(c("腺腫|腺腫|憩室", "憩室|痔核", "特記所見なし", "家族性大腸腺腫症", "進行大腸癌|ポリープ", "polyp|adenoma"))
 x<-apcadr(data)
 

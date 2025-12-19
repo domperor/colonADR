@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(apcadrJed)
+library(colonADR)
 
-test_check("apcadrJed")
+test_check("colonADR")
