@@ -1,5 +1,5 @@
 
-# colonADR_shiny
+# colonADR (R shiny app version)
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -57,7 +57,7 @@ This app calculate APC (adenoma per colonoscopy), ADR (adenoma detection rate), 
 
 1. This app works on RStudio Desktop. [Please install RStudio Desktop from here.](https://posit.co/download/rstudio-desktop/)
 
-2. [Please download "colonADRapp.R" from this folder.](./colonADRapp.R)。
+2. [Please download "colonADRapp.R" from this folder.](./colonADRapp.R)
 
 <img width="750" alt="ダウンロードボタンの位置画像" src="./img/githubraw_dl.png">
 
