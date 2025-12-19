@@ -33,10 +33,20 @@
 
 <img width="600" alt="Run Appボタンの位置画像" src="./img/runapp.png">
 
-4. 
+## 使い方
 
+1. Browse Fileボタンから，解析したいファイルを選択してください。手元にファイルがない場合は，[こちらのダミーデータベースでお試しいただくことも可能です](../tests/testthat/sample_CF_data.csv)。
 
-一内視鏡中の所見は「|」で区切ってください。
+<img width="600" alt="Browse Fileボタン" src="./img/browsefile.png">
+
+2. 自動でファイルの中身が表示されます。内視鏡所見の記載された列について，プルダウンメニューから選んでください。なお，ファイル中では，一内視鏡中の複数所見について「|」で区切ってください（JED形式）。
+
+<img width="600" alt="列名の選択" src="./img/chooserowname.png">
+
+3. Submit を押下します。結果が右上に表示されます。
+
+<img width="600" alt="結果表示" src="./img/submit.png">
+
 
 
 ## Description
