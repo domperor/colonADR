@@ -23,13 +23,13 @@
 
 ## ローカル版のインストール方法
 
-1. このアプリはRStudio Desktop上で動作します。[まずはこちらからRStudio Desktopをダウンロードしてください](https://posit.co/download/rstudio-desktop/)。
+1. このアプリはRStudio Desktop上で動作します。[まずはこちらからRStudio Desktopをインストールしてください](https://posit.co/download/rstudio-desktop/)。
 
-2. [このフォルダ中のcolonADR.appをダウンロードしてください](./colonADRapp.R)。ダウンロードボタンの位置：
+2. [このフォルダ中のcolonADRapp.Rをダウンロードしてください](./colonADRapp.R)。ダウンロードボタンの位置：
 
 <img width="750" alt="ダウンロードボタンの位置画像" src="./img/githubraw_dl.png">
 
-3. ダウンロードしたcolonADR.appをRStudio Desktopで開き，▶Run App ボタンを押下してください：
+3. ダウンロードしたcolonADRapp.RをRStudio Desktopで開き，▶Run App ボタンを押下してください：
 
 <img width="600" alt="Run Appボタンの位置画像" src="./img/runapp.png">
 
@@ -47,9 +47,24 @@
 
 <img width="600" alt="結果表示" src="./img/submit.png">
 
-
+---
 
 ## Description
 
-This app calculate APC (adenoma per colonoscopy), ADR (adenoma detection rate), polyp per colonoscopy (PPC), polyp detection rate (PDR), advanced colorectal neoplasm detection rate (ACN DR), and advanced colorectal neoplasm per colonoscopy (ACN per colonoscopy) from JED-style database. You can try it on [shinyapps.io](https://domperor.shinyapps.io/apcadrjed_shiny/).
+This app calculate APC (adenoma per colonoscopy), ADR (adenoma detection rate), polyp per colonoscopy (PPC), polyp detection rate (PDR), advanced colorectal neoplasm detection rate (ACN DR), and advanced colorectal neoplasm per colonoscopy (ACN per colonoscopy) from JED-style database. You can easily try online the interface on [shinyapps.io](https://domperor.shinyapps.io/apcadrjed_shiny/); however, we recommend using local version when handling sensitive personal information, to avoid the risk of interception.
+
+## How to install colonADR.app, local version
+
+1. This app works on RStudio Desktop. [Please install RStudio Desktop from here.](https://posit.co/download/rstudio-desktop/)
+
+2. [Please download "colonADRapp.R" from this folder.](./colonADRapp.R)。
+
+<img width="750" alt="ダウンロードボタンの位置画像" src="./img/githubraw_dl.png">
+
+3. Open "colonADRapp.R" with RStudio Desktop, and press ▶Run App button.
+
+<img width="600" alt="Run Appボタンの位置画像" src="./img/runapp.png">
+
+
+
 
