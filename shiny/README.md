@@ -27,8 +27,7 @@
 
 2. [このフォルダ中のcolonADR.appをダウンロードしてください](./colonADRapp.R){:target="_blank"}。ダウンロードボタンの位置：
 
-![ダウンロードボタンの位置画像](./img/githubraw_dl.png)
-
+<img width="500" alt="ダウンロードボタンの位置画像" src="./img/githubraw_dl.png">
 
 
 一内視鏡中の所見は「|」で区切ってください。
