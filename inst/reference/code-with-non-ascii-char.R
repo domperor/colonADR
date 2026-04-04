@@ -23,7 +23,7 @@ apcadr <- function(x) {
                    "Isp", "Ｉｓｐ", "Is", "Ｉｓ", "SSA/P", "ＳＳＡ／Ｐ",
                    "Mixed", "Ｍｉｘｅｄ", "TSA", "ＴＳＡ",
                    "IIa", "ＩＩａ", "IIb", "ＩＩｂ", "IIc", "ＩＩｃ",
-                   "III", "ＩＩＩ", "LST", "ＬＳＴ", "側方発育型")
+                   "III", "ＩＩＩ", "LST", "ＬＳＴ", "側方発育型","SSL", "ＳＳＬ")
 
   polyp_pattern <- paste(c(polyp_terms, polyposis_terms), collapse = "|")
   polyposis_pattern <- paste(polyposis_terms, collapse = "|")

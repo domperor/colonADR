@@ -39,7 +39,8 @@ apcadr <- function(x) {
     "Isp", "\uff29\uff53\uff50", "Is", "\uff29\uff53", "SSA/P", "\uff33\uff33\uff21\uff0f\uff30",
     "Mixed", "\uff2d\uff49\uff58\uff45\uff44", "TSA", "\uff34\uff33\uff21",
     "IIa", "\uff29\uff29\uff41", "IIb", "\uff29\uff29\uff42", "IIc", "\uff29\uff29\uff43",
-    "III", "\uff29\uff29\uff29", "LST", "\uff2c\uff33\uff34", "\u5074\u65b9\u767a\u80b2\u578b"
+    "III", "\uff29\uff29\uff29", "LST", "\uff2c\uff33\uff34", "\u5074\u65b9\u767a\u80b2\u578b",
+    "SSL", "\uff33\uff33\uff2c"
   )
 
   polyp_pattern <- paste(c(polyp_terms, polyposis_terms), collapse = "|")
