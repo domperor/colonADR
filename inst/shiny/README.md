@@ -16,8 +16,6 @@
 - ADR：adenoma detection rate
 - PPC：polyp per colonoscopy
 - PDR：polyp detection rate
-- ACN DR：advanced colorectal neoplasm detection rate
-- ACN per colonoscopy：advanced colorectal neoplasm per colonoscopy
 
 をJEDスタイルの内視鏡所見データベースから計算することができます。現在日本語（エンコーディング：UTF-8）のみの対応です。
 
