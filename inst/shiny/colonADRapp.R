@@ -163,7 +163,7 @@ server <- function(input, output, session) {
   })})
 
   #Output - abbreviation
-  output$abbr<-renderText("APC: adenoma per colonoscopy\nADR: adenoma detection rate\nPPC: polyp per colonoscopy\nPDR: polyp detection rate\n\n現在日本語のみの対応です。一内視鏡中の所見は「|」で区切ってください。\nFile size max: 30MB, Encoding: UTF-8 でお願いします。\n大きいファイルは解析に1分弱要します。\n 2025-12-19 v.0.0.1  ©︎ Mitsuaki Oura (@domperor) ")
+  output$abbr<-renderText("APC: adenoma per colonoscopy\nADR: adenoma detection rate\nPPC: polyp per colonoscopy\nPDR: polyp detection rate\n\n現在日本語のみの対応です。一内視鏡中の所見は「|」で区切ってください。\nFile size max: 30MB, Encoding: UTF-8 でお願いします。\n大きいファイルは解析に1分弱要します。\n 2026-06-11 v.0.0.3  ©︎ Mitsuaki Oura (@domperor) ")
 
   #Output - dataframe
   output$dataframe <- renderTable({
