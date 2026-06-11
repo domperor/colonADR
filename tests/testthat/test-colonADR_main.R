@@ -5,6 +5,4 @@ test_that("apcadr_works", {
   expect_equal(as.numeric(format(x$ADR, digits = 5)), 0.39394)
   expect_equal(as.numeric(format(x$PPC, digits = 5)), 0.6)
   expect_equal(as.numeric(format(x$PDR, digits = 5)), 0.4)
-  expect_equal(as.numeric(format(x$ACNDR, digits = 5)), 0.050505)
-  expect_equal(as.numeric(format(x$ACNPC, digits = 5)), 0.060606)
 })

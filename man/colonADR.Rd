@@ -13,13 +13,13 @@ apcadr(x)
 apcadr
 }
 \note{
-This function calculates adenoma per colonoscopy (APC), adenoma detection rate (ADR), polyp per colonoscopy (PPC), polyp detection rate (PDR), advanced colorectal neoplasm detection rate (ACN DR), and advanced colorectal neoplasm per colonoscopy (ACN per colonoscopy) from JED-style database.
+This function calculates adenoma per colonoscopy (APC), adenoma detection rate (ADR), polyp per colonoscopy (PPC) and polyp detection rate (PDR) from JED-style database.
 You can find sample database in "tests/testthat/sample_CF_data.csv".
 }
 \examples{
-data<-(c("腺腫|腺腫|憩室", "憩室|痔核", "特記所見なし", "家族性大腸腺腫症", "進行大腸癌|ポリープ", "polyp|adenoma"))
+data <- c("Adenoma|adenoma|diverticulum", "diverticulum|hemorrhoid", "unremarkable", "FAP", "advanced colon cancer|polyp", "polyp|adenoma")
 apcadr(data)
 
-# returns "APC:0.6, ADR:0.4, PPC:1, PDR:0.66667, ACN DR:0.2, ACN per colonoscopy:0.2"
+# returns "APC:0.6, ADR:0.4, PPC:1, PDR:0.66667
 
 }
