@@ -32,5 +32,7 @@ x<-apcadr(data)
 ## History
 
 2025.12.18 ver 0.0.1
+
 2026.06.11 ver 0.0.3
+
 2026.10.15 ver 0.0.4 English support
