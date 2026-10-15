@@ -1,7 +1,3 @@
-# colonADR v0.0.4 with English support
-# Package "stringi" required.
-#
-
 .colonadr_nfkc <- function(x) {
   x <- stringi::stri_trans_nfkc(x)
   x <- gsub("[‐‑‒–—―−]", "-", x, perl = TRUE)
@@ -34,6 +30,9 @@
 #' of a lesion are excluded at the finding level. Colonoscopies containing a
 #' polyposis-associated diagnosis are excluded from the denominators and
 #' numerators of all four indicators.
+#' Missing and blank labels remain in the denominators as negative examinations.
+#' Suspected lesions are included. Explicit residual or recurrent adenomas are
+#' included unless their absence or previous treatment is recorded.
 #'
 #' @param x A character vector. Each element represents one colonoscopy.
 #'   Multiple structured findings are separated by `|`.
@@ -52,14 +51,9 @@
 #' @export
 apcadr <- function(x) {
   x[is.na(x)] <- ""
-  # Keep two normalized representations. General diagnostic terms are matched
-  # case-insensitively, whereas short morphology codes such as `Is` must retain
-  # case so that the ordinary English word `is` is not misclassified.
   nfkc_x <- .colonadr_nfkc(x)
   normalized_x <- .colonadr_normalize(x)
 
-  # Polyposis-associated diagnoses. These examinations are excluded from all
-  # four denominators and numerators.
   polyposis_terms <- .colonadr_normalize(c(
     "家族性大腸腺腫症",
     "familial adenomatous polyposis",
@@ -108,15 +102,16 @@ apcadr <- function(x) {
     trimws
   )
 
-  # Long lesion names can be matched as fixed substrings.
+  # Active adenomas are also counted as polyps below.
   polyp_substring_terms <- .colonadr_normalize(c(
     "ポリープ",
-    "腺腫",
     "polyp",
-    "adenoma",
     "serrated",
     "鋸歯状",
-    "側方発育型"
+    "側方発育型",
+    "過形成性病変",
+    "laterally spreading tumor",
+    "laterally spreading lesion"
   ))
 
   adenoma_substring_terms <- .colonadr_normalize(c(
@@ -124,13 +119,20 @@ apcadr <- function(x) {
     "adenoma"
   ))
 
-  # Short morphology/diagnostic codes use case-sensitive exact matching after
-  # NFKC normalization. This prevents `Is` from matching the English word `is`.
   polyp_exact_terms <- .colonadr_nfkc(c(
     "HP", "Tsp", "Ts", "Tp", "Ua", "Uc", "Ip", "Isp", "Is",
     "SSA/P", "Mixed", "TSA", "IIa", "IIb", "IIc", "III", "LST",
-    "SSL"
+    "SSL", "SSA", "SSP", "SSA-P", "SSLD", "SSL-D",
+    "CMSEP", "LST-G", "LST-NG", "LST-G-H", "LST-G-HM",
+    "LST-G-M", "LST-G-NM", "LST-NG-F", "LST-NG-FE", "LST-NG-PD"
   ))
+
+  polyp_label_terms <- .colonadr_normalize("SSL with dysplasia")
+
+  paris_pattern <- paste0(
+    "^0-(Ip|Isp|Is|II[abc]|III)",
+    "(\\s*\\+\\s*(0-)?(Ip|Isp|Is|II[abc]|III|[abc]))*$"
+  )
 
   japanese_polyp_treated_terms <- c(
     "polypectomy後",
@@ -176,26 +178,26 @@ apcadr <- function(x) {
     english_polyp_treated_terms
   ))
 
-  japanese_adenoma_treated_terms <- as.vector(outer(
-    c("腺腫", "adenoma"),
-    c("切除後", "摘除後", "摘出後", "治療後", "切除瘢痕"),
-    paste0
+  recurrent_adenoma_terms <- .colonadr_normalize(c(
+    "遺残腺腫", "再発腺腫", "residual adenoma", "recurrent adenoma"
   ))
 
-  english_adenoma_treated_terms <- c(
-    "after adenoma resection",
-    "post-adenoma resection",
-    "post adenoma resection",
-    "adenoma resection scar",
-    "history of adenoma",
-    "history of adenomas",
-    "previous adenoma",
-    "prior adenoma"
-  )
-
-  adenoma_treated_terms <- .colonadr_normalize(c(
-    japanese_adenoma_treated_terms,
-    english_adenoma_treated_terms
+  recurrent_adenoma_treated_terms <- .colonadr_normalize(c(
+    as.vector(outer(
+      c("遺残腺腫", "再発腺腫"),
+      c("切除後", "摘除後", "摘出後", "治療後", "切除瘢痕"),
+      paste0
+    )),
+    as.vector(outer(
+      c("history of ", "previous ", "prior ", "after ", "post-", "post "),
+      c("residual adenoma", "recurrent adenoma"),
+      paste0
+    )),
+    as.vector(outer(
+      c("residual adenoma", "recurrent adenoma"),
+      c(" resection scar", " removal scar"),
+      paste0
+    ))
   ))
 
   polyp_negative_terms <- .colonadr_normalize(c(
@@ -206,7 +208,11 @@ apcadr <- function(x) {
     "negative for polyp",
     "negative for polyps",
     "no evidence of polyp",
-    "no evidence of polyps"
+    "no evidence of polyps",
+    "ポリープなし",
+    "ポリープ認めず",
+    "free of polyps",
+    "polyp-free"
   ))
 
   adenoma_negative_terms <- .colonadr_normalize(c(
@@ -217,20 +223,43 @@ apcadr <- function(x) {
     "negative for adenoma",
     "negative for adenomas",
     "no evidence of adenoma",
-    "no evidence of adenomas"
+    "no evidence of adenomas",
+    "腺腫なし",
+    "腺腫を認めない",
+    "腺腫陰性",
+    "腺腫\\s*\\(-\\)",
+    "absence of adenoma",
+    "no residual adenoma",
+    "no recurrent adenoma"
   ))
 
-  is_active_polyp <- function(findings, case_sensitive_findings) {
-    (.colonadr_contains_any(findings, polyp_substring_terms) |
-       .colonadr_is_exact(case_sensitive_findings, polyp_exact_terms)) &
-      !.colonadr_contains_any(findings, polyp_treated_terms) &
+  nonadenomatous_terms <- .colonadr_normalize(c(
+    "非腺腫性", "腺腫ではない", "nonadenomatous", "non-adenomatous"
+  ))
+
+  is_active_adenoma <- function(findings) {
+    is_recurrent <-
+      .colonadr_contains_any(findings, recurrent_adenoma_terms) &
+      !.colonadr_contains_any(findings, recurrent_adenoma_treated_terms)
+
+    .colonadr_contains_any(findings, adenoma_substring_terms) &
+      (!.colonadr_contains_any(findings, polyp_treated_terms) | is_recurrent) &
+      !.colonadr_contains_any(findings, recurrent_adenoma_treated_terms) &
+      !.colonadr_contains_any(findings, adenoma_negative_terms) &
+      !.colonadr_contains_any(findings, nonadenomatous_terms) &
       !.colonadr_contains_any(findings, polyp_negative_terms)
   }
 
-  is_active_adenoma <- function(findings) {
-    .colonadr_contains_any(findings, adenoma_substring_terms) &
-      !.colonadr_contains_any(findings, adenoma_treated_terms) &
-      !.colonadr_contains_any(findings, adenoma_negative_terms)
+  is_active_polyp <- function(findings, case_sensitive_findings) {
+    ((.colonadr_contains_any(findings, polyp_substring_terms) |
+        .colonadr_is_exact(case_sensitive_findings, polyp_exact_terms) |
+        .colonadr_is_exact(findings, polyp_label_terms) |
+        grepl(paris_pattern, case_sensitive_findings)) &
+       !.colonadr_contains_any(findings, polyp_treated_terms) &
+       !.colonadr_contains_any(findings, recurrent_adenoma_treated_terms) &
+       !.colonadr_contains_any(findings, polyp_negative_terms) &
+       !.colonadr_contains_any(findings, adenoma_negative_terms)) |
+      is_active_adenoma(findings)
   }
 
   polyp_counts <- vapply(
