@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This package calculate APC (adenoma per colonoscopy), ADR (adenoma detection rate), polyp per colonoscopy (PPC), polyp detection rate (PDR), advanced colorectal neoplasm detection rate (ACN DR), and advanced colorectal neoplasm per colonoscopy (ACN per colonoscopy) from JED-style database. You can find test dataset in "/tests/testthat/sample_CF_data.csv". **For Shiny app, see ["/inst/shiny"](./inst/shiny).**
+This package calculate APC (adenoma per colonoscopy), ADR (adenoma detection rate), polyp per colonoscopy (PPC) and polyp detection rate (PDR) from JED-style database. You can find test dataset in "/tests/testthat/sample_CF_data.csv". **For Shiny app, see ["/inst/shiny"](./inst/shiny).**
 
 
 ## Installation
@@ -33,3 +33,4 @@ x<-apcadr(data)
 
 2025.12.18 ver 0.0.1
 2026.06.11 ver 0.0.3
+2026.10.15 ver 0.0.4 English support

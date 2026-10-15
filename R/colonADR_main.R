@@ -1,113 +1,266 @@
-#' apcadr
+# colonADR v0.0.4 with English support
+# Package "stringi" required.
+#
+
+.colonadr_nfkc <- function(x) {
+  x <- stringi::stri_trans_nfkc(x)
+  x <- gsub("[\u2010\u2011\u2012\u2013\u2014\u2015\u2212]", "-", x, perl = TRUE)
+  x <- gsub("\\s+", " ", x, perl = TRUE)
+  trimws(x)
+}
+
+.colonadr_normalize <- function(x) {
+  stringi::stri_trans_tolower(.colonadr_nfkc(x))
+}
+
+.colonadr_contains_any <- function(x, terms) {
+  grepl(paste(terms, collapse = "|"), x)
+}
+
+.colonadr_is_exact <- function(x, terms) {
+  x %in% terms
+}
+
+#' Estimate colonoscopy quality indicators from structured diagnosis labels
 #'
-#' @param x Row of a dataset.
+#' Each element of `x` represents one colonoscopy. Multiple findings within an
+#' examination must be separated by a vertical bar (`|`). Japanese and English
+#' structured diagnosis labels can be used in the same input vector.
+#'
+#' General diagnostic terms are matched after Unicode NFKC normalization and
+#' lower-casing. Short morphology codes such as `Is` retain their case after
+#' NFKC normalization so that the ordinary English word `is` is not counted.
+#' Findings describing previous treatment, history, scars, or explicit absence
+#' of a lesion are excluded at the finding level. Colonoscopies containing a
+#' polyposis-associated diagnosis are excluded from the denominators and
+#' numerators of all four indicators.
+#'
+#' @param x A character vector. Each element represents one colonoscopy.
+#'   Multiple structured findings are separated by `|`.
+#' @return A list containing `APC`, `ADR`, `PPC`, and `PDR`. 
 #'
 #' @examples
-#' data<-(c("腺腫|腺腫|憩室", "憩室|痔核", "特記所見なし", "家族性大腸腺腫症", "進行大腸癌|ポリープ", "polyp|adenoma"))
-#' x<-apcadr(data)
-#'
-#' # prints "APC:0.6, ADR:0.4, PPC:1, PDR:0.66667
-#' # Then you can access each value with x$APC, x$ADR, x$PPC and x$PDR.
-#'
-#' @note
-#' This function calculates adenoma per colonoscopy (APC), adenoma detection rate (ADR), polyp per colonoscopy (PPC) and polyp detection rate (PDR) from JED-style database.
-#' You can find sample database in "tests/testthat/sample_CF_data.csv".
+#' x <- c(
+#'   "Tubular adenoma|Hyperplastic polyp",
+#'   "No remarkable findings",
+#'   "Post-polypectomy scar",
+#'   "FAP",
+#'   "Sessile serrated lesion"
+#' )
+#' apcadr(x)
 #'
 #' @export
-#'
-# code with non-ascii char for reference, v0.0.3
-
 apcadr <- function(x) {
-  split_values <- unlist(strsplit(x, "\\|"))
-  
-  polyposis_terms <- c(
-    "\u5bb6\u65cf\u6027\u5927\u8178\u817a\u816b\u75c7", "FAP", "\uff26\uff21\uff30", "\u30dd\u30ea\u30dd\u30fc\u30b7\u30b9", "peutz-jeghers",
+  x[is.na(x)] <- ""
+  # Keep two normalized representations. General diagnostic terms are matched
+  # case-insensitively, whereas short morphology codes such as `Is` must retain
+  # case so that the ordinary English word `is` is not misclassified.
+  nfkc_x <- .colonadr_nfkc(x)
+  normalized_x <- .colonadr_normalize(x)
+
+  # Polyposis-associated diagnoses. These examinations are excluded from all
+  # four denominators and numerators.
+  polyposis_terms <- .colonadr_normalize(c(
+    "\u5bb6\u65cf\u6027\u5927\u8178\u817a\u816b\u75c7",
+    "familial adenomatous polyposis",
+    "FAP",
+    "\u30dd\u30ea\u30dd\u30fc\u30b7\u30b9",
+    "polyposis",
     "Peutz-Jeghers",
-    "polyposis", "Polyposis", "cronkhite-canada", "Cronkhite-Canada", "lynch",
-    "Lynch", "cowden", "Cowden", "gardner", "Gardner", "turcot", "Turcot",
-    "HNPCC", "\uff50\uff45\uff55\uff54\uff5a", "\uff30\uff45\uff55\uff54\uff5a", "\uff50\uff4f\uff4c\uff59\uff50\uff4f\uff53\uff49\uff53",
-    "\uff30\uff4f\uff4c\uff59\uff50\uff4f\uff53\uff49\uff53", "\uff43\uff52\uff4f\uff4e\uff4b\uff48\uff49\uff54\uff45", "\uff23\uff52\uff4f\uff4e\uff4b\uff48\uff49\uff54\uff45",
-    "\uff4c\uff59\uff4e\uff43\uff48", "\uff2c\uff59\uff4e\uff43\uff48", "\uff43\uff4f\uff57\uff44\uff45\uff4e", "\uff23\uff4f\uff57\uff44\uff45\uff4e", "\uff28\uff2e\uff30\uff23\uff23",
-    "\uff47\uff41\uff52\uff44\uff4e\uff45\uff52", "\uff27\uff41\uff52\uff44\uff4e\uff45\uff52", "\uff54\uff55\uff52\uff43\uff4f\uff54", "\uff34\uff55\uff52\uff43\uff4f\uff54"
-  )
-  
-  polyp_terms <- c(
-    "\u30dd\u30ea\u30fc\u30d7", "\u817a\u816b", "polyp", "serrated", "adenoma",
-    "Polyp", "Serrated", "Adenoma", "\uff50\uff4f\uff4c\uff59\uff50",
-    "\uff53\uff45\uff52\uff52\uff41\uff54\uff45\uff44", "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41", "\uff30\uff4f\uff4c\uff59\uff50",
-    "\uff33\uff45\uff52\uff52\uff41\uff54\uff45\uff44", "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41",
-    "\u92f8\u6b6f\u72b6", "HP", "\uff28\uff30", "Tsp", "\uff34\uff53\uff50", "Ts", "\uff34\uff53",
-    "Tp", "\uff34\uff50", "Ua", "\uff35\uff41", "Uc", "\uff35\uff43", "Ip", "\uff29\uff50",
-    "Isp", "\uff29\uff53\uff50", "Is", "\uff29\uff53", "SSA/P", "\uff33\uff33\uff21\uff0f\uff30",
-    "Mixed", "\uff2d\uff49\uff58\uff45\uff44", "TSA", "\uff34\uff33\uff21",
-    "IIa", "\uff29\uff29\uff41", "IIb", "\uff29\uff29\uff42", "IIc", "\uff29\uff29\uff43",
-    "III", "\uff29\uff29\uff29", "LST", "\uff2c\uff33\uff34", "\u5074\u65b9\u767a\u80b2\u578b", "SSL", "\uff33\uff33\uff2c"
-  )
-  
-  polyp_treated_terms <- c(
-    "polypectomy\u5f8c", "Polypectomy\u5f8c",
-    "\uff50\uff4f\uff4c\uff59\uff50\uff45\uff43\uff54\uff4f\uff4d\uff59\u5f8c", "\uff30\uff4f\uff4c\uff59\uff50\uff45\uff43\uff54\uff4f\uff4d\uff59\u5f8c",
-    "\u30dd\u30ea\u30fc\u30d7\u5207\u9664\u5f8c", "\u30dd\u30ea\u30fc\u30d7\u6458\u9664\u5f8c", "\u30dd\u30ea\u30fc\u30d7\u6458\u51fa\u5f8c", "\u30dd\u30ea\u30fc\u30d7\u6cbb\u7642\u5f8c",
-    "\u817a\u816b\u5207\u9664\u5f8c", "\u817a\u816b\u6458\u9664\u5f8c", "\u817a\u816b\u6458\u51fa\u5f8c", "\u817a\u816b\u6cbb\u7642\u5f8c",
-    "polyp\u5207\u9664\u5f8c", "polyp\u6458\u9664\u5f8c", "polyp\u6458\u51fa\u5f8c", "polyp\u6cbb\u7642\u5f8c",
-    "Polyp\u5207\u9664\u5f8c", "Polyp\u6458\u9664\u5f8c", "Polyp\u6458\u51fa\u5f8c", "Polyp\u6cbb\u7642\u5f8c",
-    "\uff50\uff4f\uff4c\uff59\uff50\u5207\u9664\u5f8c", "\uff50\uff4f\uff4c\uff59\uff50\u6458\u9664\u5f8c", "\uff50\uff4f\uff4c\uff59\uff50\u6458\u51fa\u5f8c", "\uff50\uff4f\uff4c\uff59\uff50\u6cbb\u7642\u5f8c",
-    "\uff30\uff4f\uff4c\uff59\uff50\u5207\u9664\u5f8c", "\uff30\uff4f\uff4c\uff59\uff50\u6458\u9664\u5f8c", "\uff30\uff4f\uff4c\uff59\uff50\u6458\u51fa\u5f8c", "\uff30\uff4f\uff4c\uff59\uff50\u6cbb\u7642\u5f8c",
-    "adenoma\u5207\u9664\u5f8c", "adenoma\u6458\u9664\u5f8c", "adenoma\u6458\u51fa\u5f8c", "adenoma\u6cbb\u7642\u5f8c",
-    "Adenoma\u5207\u9664\u5f8c", "Adenoma\u6458\u9664\u5f8c", "Adenoma\u6458\u51fa\u5f8c", "Adenoma\u6cbb\u7642\u5f8c",
-    "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41\u5207\u9664\u5f8c", "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6458\u9664\u5f8c", "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6458\u51fa\u5f8c", "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6cbb\u7642\u5f8c",
-    "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41\u5207\u9664\u5f8c", "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6458\u9664\u5f8c", "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6458\u51fa\u5f8c", "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6cbb\u7642\u5f8c"
-  )
-  
-  adenoma_treated_terms <- c(
-    "\u817a\u816b\u5207\u9664\u5f8c", "\u817a\u816b\u6458\u9664\u5f8c", "\u817a\u816b\u6458\u51fa\u5f8c", "\u817a\u816b\u6cbb\u7642\u5f8c",
-    "adenoma\u5207\u9664\u5f8c", "adenoma\u6458\u9664\u5f8c", "adenoma\u6458\u51fa\u5f8c", "adenoma\u6cbb\u7642\u5f8c",
-    "Adenoma\u5207\u9664\u5f8c", "Adenoma\u6458\u9664\u5f8c", "Adenoma\u6458\u51fa\u5f8c", "Adenoma\u6cbb\u7642\u5f8c",
-    "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41\u5207\u9664\u5f8c", "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6458\u9664\u5f8c", "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6458\u51fa\u5f8c", "\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6cbb\u7642\u5f8c",
-    "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41\u5207\u9664\u5f8c", "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6458\u9664\u5f8c", "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6458\u51fa\u5f8c", "\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41\u6cbb\u7642\u5f8c"
-  )
-  
-  polyp_pattern <- paste(c(polyp_terms, polyposis_terms), collapse = "|")
-  polyposis_pattern <- paste(polyposis_terms, collapse = "|")
-  polyp_treated_pattern <- paste(polyp_treated_terms, collapse = "|")
-  adenoma_treated_pattern <- paste(adenoma_treated_terms, collapse = "|")
-  
-  num_polyp <- sum(grepl(polyp_pattern, split_values)) -
-    sum(grepl(polyp_treated_pattern, split_values))
-  
-  num_polyppositive <- sum(grepl(polyp_pattern, x)) -
-    sum(grepl(polyp_treated_pattern, x))
-  
-  num_adenoma <- sum(grepl("\u817a\u816b|adenoma|Adenoma|\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41|\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41", split_values)) -
-    sum(grepl("\u5bb6\u65cf\u6027\u5927\u8178\u817a\u816b\u75c7|FAP|\uff26\uff21\uff30", split_values)) -
-    sum(grepl(adenoma_treated_pattern, split_values))
-  
-  num_adenomapositive <- sum(grepl("\u817a\u816b|adenoma|Adenoma|\uff41\uff44\uff45\uff4e\uff4f\uff4d\uff41|\uff21\uff44\uff45\uff4e\uff4f\uff4d\uff41", x)) -
-    sum(grepl("\u5bb6\u65cf\u6027\u5927\u8178\u817a\u816b\u75c7|FAP|\uff26\uff21\uff30", x)) -
-    sum(grepl(adenoma_treated_pattern, x))
-  
-  num_polyposis <- sum(grepl(polyposis_pattern, x))
-  
-  ppc <- num_polyp / length(x)
-  pdr <- num_polyppositive / length(x)
-  apc <- num_adenoma / (length(x) - num_polyposis)
-  adr <- num_adenomapositive / (length(x) - num_polyposis)
-  
-  result <- list(
-    APC = apc,
-    ADR = adr,
-    PPC = ppc,
-    PDR = pdr
-  )
-  
-  print(
-    paste0(
-      "APC:", format(apc, digits = 5),
-      ", ADR:", format(adr, digits = 5),
-      ", PPC:", format(ppc, digits = 5),
-      ", PDR:", format(pdr, digits = 5)
+    "Cronkhite-Canada",
+    "Lynch",
+    "HNPCC",
+    "Cowden",
+    "Gardner",
+    "Turcot"
+  ))
+
+  is_polyposis <- .colonadr_contains_any(normalized_x, polyposis_terms)
+  eligible <- !is_polyposis
+  n_total <- length(normalized_x)
+  n_eligible <- sum(eligible)
+
+  if (n_eligible == 0L) {
+    result <- list(
+      APC = NA_real_, ADR = NA_real_, PPC = NA_real_, PDR = NA_real_
     )
+    warning(
+      "No eligible colonoscopies remained after excluding polyposis records.",
+      call. = FALSE
+    )
+    return(result)
+  }
+
+  findings_by_exam <- strsplit(
+    normalized_x[eligible],
+    split = "\\|",
+    perl = TRUE
   )
-  
-  return(result)
+  findings_by_exam <- lapply(findings_by_exam, trimws)
+
+  case_sensitive_findings_by_exam <- strsplit(
+    nfkc_x[eligible],
+    split = "\\|",
+    perl = TRUE
+  )
+  case_sensitive_findings_by_exam <- lapply(
+    case_sensitive_findings_by_exam,
+    trimws
+  )
+
+  # Long lesion names can be matched as fixed substrings.
+  polyp_substring_terms <- .colonadr_normalize(c(
+    "\u30dd\u30ea\u30fc\u30d7",
+    "\u817a\u816b",
+    "polyp",
+    "adenoma",
+    "serrated",
+    "\u92f8\u6b6f\u72b6",
+    "\u5074\u65b9\u767a\u80b2\u578b"
+  ))
+
+  adenoma_substring_terms <- .colonadr_normalize(c(
+    "\u817a\u816b",
+    "adenoma"
+  ))
+
+  # Short morphology/diagnostic codes use case-sensitive exact matching after
+  # NFKC normalization. This prevents `Is` from matching the English word `is`.
+  polyp_exact_terms <- .colonadr_nfkc(c(
+    "HP", "Tsp", "Ts", "Tp", "Ua", "Uc", "Ip", "Isp", "Is",
+    "SSA/P", "Mixed", "TSA", "IIa", "IIb", "IIc", "III", "LST",
+    "SSL"
+  ))
+
+  japanese_polyp_treated_terms <- c(
+    "polypectomy\u5f8c",
+    as.vector(outer(
+      c("\u30dd\u30ea\u30fc\u30d7", "\u817a\u816b", "polyp", "adenoma"),
+      c("\u5207\u9664\u5f8c", "\u6458\u9664\u5f8c", "\u6458\u51fa\u5f8c", "\u6cbb\u7642\u5f8c", "\u5207\u9664\u7622\u75d5"),
+      paste0
+    ))
+  )
+
+  english_polyp_treated_terms <- c(
+    "after polypectomy",
+    "post-polypectomy",
+    "post polypectomy",
+    "postpolypectomy",
+    "status post polypectomy",
+    "s/p polypectomy",
+    "polypectomy scar",
+    "polypectomy site scar",
+    "history of polypectomy",
+    "previous polypectomy",
+    "prior polypectomy",
+    "after polyp removal",
+    "post-polyp removal",
+    "post polyp removal",
+    "polyp removal scar",
+    "history of polyp",
+    "history of polyps",
+    "previous polyp",
+    "prior polyp",
+    "after adenoma resection",
+    "post-adenoma resection",
+    "post adenoma resection",
+    "adenoma resection scar",
+    "history of adenoma",
+    "history of adenomas",
+    "previous adenoma",
+    "prior adenoma"
+  )
+
+  polyp_treated_terms <- .colonadr_normalize(c(
+    japanese_polyp_treated_terms,
+    english_polyp_treated_terms
+  ))
+
+  japanese_adenoma_treated_terms <- as.vector(outer(
+    c("\u817a\u816b", "adenoma"),
+    c("\u5207\u9664\u5f8c", "\u6458\u9664\u5f8c", "\u6458\u51fa\u5f8c", "\u6cbb\u7642\u5f8c", "\u5207\u9664\u7622\u75d5"),
+    paste0
+  ))
+
+  english_adenoma_treated_terms <- c(
+    "after adenoma resection",
+    "post-adenoma resection",
+    "post adenoma resection",
+    "adenoma resection scar",
+    "history of adenoma",
+    "history of adenomas",
+    "previous adenoma",
+    "prior adenoma"
+  )
+
+  adenoma_treated_terms <- .colonadr_normalize(c(
+    japanese_adenoma_treated_terms,
+    english_adenoma_treated_terms
+  ))
+
+  polyp_negative_terms <- .colonadr_normalize(c(
+    "no polyp",
+    "no polyps",
+    "without polyp",
+    "without polyps",
+    "negative for polyp",
+    "negative for polyps",
+    "no evidence of polyp",
+    "no evidence of polyps"
+  ))
+
+  adenoma_negative_terms <- .colonadr_normalize(c(
+    "no adenoma",
+    "no adenomas",
+    "without adenoma",
+    "without adenomas",
+    "negative for adenoma",
+    "negative for adenomas",
+    "no evidence of adenoma",
+    "no evidence of adenomas"
+  ))
+
+  is_active_polyp <- function(findings, case_sensitive_findings) {
+    (.colonadr_contains_any(findings, polyp_substring_terms) |
+       .colonadr_is_exact(case_sensitive_findings, polyp_exact_terms)) &
+      !.colonadr_contains_any(findings, polyp_treated_terms) &
+      !.colonadr_contains_any(findings, polyp_negative_terms)
+  }
+
+  is_active_adenoma <- function(findings) {
+    .colonadr_contains_any(findings, adenoma_substring_terms) &
+      !.colonadr_contains_any(findings, adenoma_treated_terms) &
+      !.colonadr_contains_any(findings, adenoma_negative_terms)
+  }
+
+  polyp_counts <- vapply(
+    seq_along(findings_by_exam),
+    function(index) as.integer(sum(is_active_polyp(
+      findings_by_exam[[index]],
+      case_sensitive_findings_by_exam[[index]]
+    ))),
+    integer(1)
+  )
+
+  adenoma_counts <- vapply(
+    findings_by_exam,
+    function(findings) as.integer(sum(is_active_adenoma(findings))),
+    integer(1)
+  )
+
+  result <- list(
+    APC = sum(adenoma_counts) / n_eligible,
+    ADR = sum(adenoma_counts > 0L) / n_eligible,
+    PPC = sum(polyp_counts) / n_eligible,
+    PDR = sum(polyp_counts > 0L) / n_eligible
+  )
+
+  print(paste0(
+    "APC:", format(result$APC, digits = 5),
+    ", ADR:", format(result$ADR, digits = 5),
+    ", PPC:", format(result$PPC, digits = 5),
+    ", PDR:", format(result$PDR, digits = 5)
+  ))
+
+  result
 }

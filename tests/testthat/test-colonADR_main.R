@@ -3,6 +3,6 @@ test_that("apcadr_works", {
   x<-apcadr(data$統計_診断)
   expect_equal(as.numeric(format(x$APC, digits = 5)), 0.59596)
   expect_equal(as.numeric(format(x$ADR, digits = 5)), 0.39394)
-  expect_equal(as.numeric(format(x$PPC, digits = 5)), 0.6)
-  expect_equal(as.numeric(format(x$PDR, digits = 5)), 0.4)
+  expect_equal(as.numeric(format(x$PPC, digits = 5)), 0.60606)
+  expect_equal(as.numeric(format(x$PDR, digits = 5)), 0.40404)
 })
