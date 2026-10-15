@@ -25,7 +25,7 @@ library(colonADR)
 data<-(c("腺腫|腺腫|憩室", "憩室|痔核", "特記所見なし", "家族性大腸腺腫症", "進行大腸癌|ポリープ", "polyp|adenoma"))
 x<-apcadr(data)
 
-# prints "APC:0.6, ADR:0.4, PPC:1, PDR:0.66667
+# prints "APC:0.6, ADR:0.4, PPC:1, PDR:0.6
 # Then you can access each value with x$APC, x$ADR, x$PPC and x$PDR.
 ```
 
