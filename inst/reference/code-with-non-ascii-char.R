@@ -161,7 +161,6 @@ apcadr <- function(x, preview_n = 0L) {
   ))
 
   polyp_case_sensitive_substring <- "LST"
-  polyp_label_terms <- .colonadr_normalize("SSL with dysplasia")
 
   paris_pattern <- paste0(
     "^0-(Ip|Isp|Is|II[abc]|III)",
@@ -325,9 +324,8 @@ apcadr <- function(x, preview_n = 0L) {
     "(?:\\s*:?\\s*", suspected_affix, ")+$"
   )
 
-  polyp_code_matches <- function(findings, case_sensitive_findings) {
+  polyp_code_matches <- function(case_sensitive_findings) {
     .colonadr_is_exact(case_sensitive_findings, polyp_exact_terms) |
-      .colonadr_is_exact(findings, polyp_label_terms) |
       grepl(paris_pattern, case_sensitive_findings)
   }
 
@@ -343,7 +341,7 @@ apcadr <- function(x, preview_n = 0L) {
     polyp <- (.colonadr_contains_any(findings, polyp_substring_terms) |
                 grepl(polyp_case_sensitive_substring, case_sensitive_findings,
                       fixed = TRUE) |
-                polyp_code_matches(findings, case_sensitive_findings)) &
+                polyp_code_matches(case_sensitive_findings)) &
       polyp_allowed
 
     adenoma_loose <- .colonadr_contains_any(findings, adenoma_substring_terms) &
@@ -359,7 +357,7 @@ apcadr <- function(x, preview_n = 0L) {
       # Strip only leading or trailing suspicion wording; keep code case.
       label <- trimws(gsub(suspected_edges, "", case_sensitive_findings[recheck],
                            ignore.case = TRUE, perl = TRUE))
-      polyp_loose[recheck] <- polyp_code_matches(.colonadr_normalize(label), label)
+      polyp_loose[recheck] <- polyp_code_matches(label)
     }
 
     list(adenoma_loose = adenoma_loose, adenoma_strict = adenoma_strict,
