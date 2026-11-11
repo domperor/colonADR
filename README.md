@@ -22,11 +22,11 @@ This is a basic example:
 
 ``` r
 library(colonADR)
-data<-(c("腺腫|腺腫|憩室", "憩室|痔核", "特記所見なし", "家族性大腸腺腫症", "進行大腸癌|ポリープ", "polyp|adenoma"))
+data<-(c("腺腫|腺腫疑い|憩室", "憩室|痔核", "特記所見なし", "家族性大腸腺腫症", "進行大腸癌|ポリープ", "polyp|adenoma"))
 x<-apcadr(data)
 
-# prints "APC:0.6, ADR:0.4, PPC:1, PDR:0.6
-# Then you can access each value with x$APC, x$ADR, x$PPC and x$PDR.
+# prints "APCstrict:0.4, APCloose:0.6, ADRstrict:0.4, ADRloose:0.4, PPCstrict:0.8, PPCloose:1, PDRstrict:0.6, PDRloose:0.6"
+# Then you can access each value with x$APCstrict, x$APCloose (or x$APC), x$ADRstrict, x$ADRloose (or x$ADR), x$PPCstrict, x$PPCloose (or x$PPC), x$PDRstrict and x$PDRloose (or x$PDR).
 ```
 
 ## History
@@ -36,3 +36,5 @@ x<-apcadr(data)
 2026.06.11 ver 0.0.3
 
 2026.10.15 ver 0.0.4 English support
+
+2026.11.11 ver 0.0.5 strict/loose support
